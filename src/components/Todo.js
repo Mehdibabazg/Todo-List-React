@@ -8,7 +8,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 
-export default function Todo() {
+export default function Todo({title, description}) {
     return (
         <>
           <Card 
@@ -17,8 +17,8 @@ export default function Todo() {
             <CardContent>
                 <Grid container spacing={2}>
                     <Grid xs={8}>
-                        <Typography variant="h5" sx={{ textAlign: "left" }}>First Task</Typography>
-                        <Typography variant="h6" sx={{ textAlign: "left" }}>Desciption of First Task</Typography>
+                        <Typography variant="h5" sx={{ textAlign: "left" }}>{title}</Typography>
+                        <Typography variant="h6" sx={{ textAlign: "left" }}>{description}</Typography>
                     </Grid>
                     <Grid xs={4} display="flex" justifyContent="space-around" alignItems="center">
                         <IconButton className="iconButton" aria-label="delete" style={{color: "#8bc34a", backgroundColor: "white", border: "solid 3px" }}>

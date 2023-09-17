@@ -11,6 +11,7 @@ function App() {
         justifyContent: "center", 
         alignItems:"center", 
         height:"100vh",
+        minHeight:"100%",
         background: "#191b1f"}}>
       <TodoList />
     </div>
