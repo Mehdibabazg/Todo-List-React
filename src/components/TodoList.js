@@ -9,39 +9,29 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { v4 as uuidv4 } from 'uuid';
+
+import { TodosContext } from '../contexts/TodosContext';
+import { useContext } from 'react';
 import { useState } from 'react';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import Todo from './Todo';
 
-const initialTodos = [
-    {
-        id: uuidv4(),
-        title: "task1",
-        description: "lorem ipsum 1",
-        isCompleted: false
-    },
-    {
-        id: uuidv4(),
-        title: "task2",
-        description: "lorem ipsum 2",
-        isCompleted: false
-    },
-    {
-        id: uuidv4(),
-        title: "task3",
-        description: "lorem ipsum 3",
-        isCompleted: false
-    }
-];
 
 export default function TodoList() {
-    const [todos, setTodos] = useState(initialTodos);
-    const [titleInput, setTitleInput] = useState("")
+
+    const {todos, setTodos} = useContext(TodosContext)
+    const [titleInput, setTitleInput] = useState("");
+
+    function handleCheckClick(todoId){
+
+    }
+
     const todosJsx = todos.map((t) => {
-        return <Todo key={t.id} title={t.title} description={t.description} />
+        return <Todo key={t.id} todo={t} />
     })
-    function handelAddClick(){
+    function handleAddClick(){
         const newTodo = {
             id: uuidv4(),
             title: titleInput,
@@ -104,7 +94,7 @@ export default function TodoList() {
                             variant="contained"
                             style={{width: "100%", height: "100%", fontWeight:"bold" }}
                             onClick={() => {
-                                handelAddClick();
+                                handleAddClick();
                             }}
                         >
                             Add</Button>
