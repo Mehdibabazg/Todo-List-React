@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -23,6 +24,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 export default function Todo({ todo }) {
 
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+    const [updatedTodo, setUpdatedTodo] = useState({title: todo.title, description: todo.description});
     const {todos, setTodos} = useContext(TodosContext);
 
     function handleCheckClick(){
@@ -37,8 +40,14 @@ export default function Todo({ todo }) {
     function handleDeleteClick(){
         setShowDeleteDialog(true);
     }
-    function handleClose(){
+    function handleDeleteDialogClose(){
         setShowDeleteDialog(false);
+    }
+    function handleUpdateClick(){
+        setShowUpdateDialog(true);
+    }
+    function handleUpdateClose(){
+        setShowUpdateDialog(false);
     }
     function handleDeleteConfirm(){
         const updatedTodos = todos.filter((t) => {
@@ -46,11 +55,22 @@ export default function Todo({ todo }) {
         });
         setTodos(updatedTodos);
     }
+    function handleUpdateConfirm(){
+        const updatedTodos = todos.map((t) => {
+            if(t.id === todo.id){
+                return {...t, title: updatedTodo.title, description: updatedTodo.description};
+            }else{
+                return t
+            }
+        });
+        setTodos(updatedTodos);
+        setShowUpdateDialog(false);
+    }
     return (
         <>
         {/* DELETE MODAL */}
         <Dialog
-            onClose={handleClose}
+            onClose={handleDeleteDialogClose}
             open={showDeleteDialog}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -65,11 +85,56 @@ export default function Todo({ todo }) {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Disagree</Button>
+                <Button onClick={handleDeleteDialogClose}>Disagree</Button>
                 <Button onClick={handleDeleteConfirm} autoFocus>Agree</Button>
             </DialogActions>
         </Dialog>
         {/* === DELETE MODAL === */}
+
+        {/* EDIT MODAL */}
+        <Dialog
+            onClose={handleUpdateClose}
+            open={showUpdateDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                Edit task
+            </DialogTitle>
+            <DialogContent>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Task title"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    value={updatedTodo.title}
+                    onChange={(e) => {
+                        setUpdatedTodo({...updatedTodo, title: e.target.value})
+                    }}
+                />
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Task description"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    value={updatedTodo.description}
+                    onChange={(e) => {
+                        setUpdatedTodo({...updatedTodo, description: e.target.value})
+                    }}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleUpdateClose}>Disagree</Button>
+                <Button onClick={handleUpdateConfirm} autoFocus>Confirm</Button>
+            </DialogActions>
+        </Dialog>
+        {/* === EDIT MODAL === */}
           <Card 
             className="todoCard"
             sx={{ minWidth: 275, background: "#283593", color:"white", marginTop: 3 }}>
@@ -100,6 +165,7 @@ export default function Todo({ todo }) {
                             <CheckIcon />
                         </IconButton>
                         <IconButton 
+                            onClick={handleUpdateClick}
                             className="iconButton" 
                             aria-label="edit" 
                             style={{
@@ -111,6 +177,7 @@ export default function Todo({ todo }) {
                             <ModeEditOutlineIcon />
                         </IconButton>
                         <IconButton 
+                            onClick={handleDeleteClick}
                             className="iconButton" 
                             aria-label="delete" 
                             style={{
@@ -118,7 +185,6 @@ export default function Todo({ todo }) {
                                 backgroundColor: "white", 
                                 border: "solid 3px" 
                             }}
-                            onClick={handleDeleteClick}
                         >
                             <DeleteOutlineIcon />
                         </IconButton>
