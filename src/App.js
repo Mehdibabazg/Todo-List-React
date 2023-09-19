@@ -4,6 +4,16 @@ import TodoList from './components/TodoList';
 import { TodosContext } from './contexts/TodosContext'; 
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material';
+
+const theme = createTheme({
+  palette: {
+    primary : {
+      main: "#dd2c00",
+    }
+  }
+});
 
 const initialTodos = [
   {
@@ -29,20 +39,22 @@ const initialTodos = [
 function App() {
   const [todos, setTodos] = useState(initialTodos);
   return (
-    <div 
-      className="App" 
-      style={{
-        display: "flex",
-        justifyContent: "center", 
-        alignItems:"center", 
-        height:"100vh",
-        minHeight:"100%",
-        background: "#191b1f"}}
-      >
-      <TodosContext.Provider value={{todos, setTodos}}>    
-        <TodoList />
-      </TodosContext.Provider>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div 
+        className="App" 
+        style={{
+          display: "flex",
+          justifyContent: "center", 
+          alignItems:"center", 
+          height:"100vh",
+          minHeight:"100%",
+          background: "#191b1f"}}
+        >
+        <TodosContext.Provider value={{todos, setTodos}}>    
+          <TodoList />
+        </TodosContext.Provider>
+      </div>
+    </ThemeProvider>
   );
 }
 

@@ -25,7 +25,10 @@ export default function Todo({ todo }) {
 
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-    const [updatedTodo, setUpdatedTodo] = useState({title: todo.title, description: todo.description});
+    const [updatedTodo, setUpdatedTodo] = useState({
+        title: todo.title, 
+        description: todo.description,
+    });
     const {todos, setTodos} = useContext(TodosContext);
 
     function handleCheckClick(){
@@ -35,7 +38,8 @@ export default function Todo({ todo }) {
             }
             return t
         });
-        setTodos(updatedTodos)
+        setTodos(updatedTodos);
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
     }
     function handleDeleteClick(){
         setShowDeleteDialog(true);
@@ -54,6 +58,7 @@ export default function Todo({ todo }) {
             return t.id !== todo.id;
         });
         setTodos(updatedTodos);
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
     }
     function handleUpdateConfirm(){
         const updatedTodos = todos.map((t) => {
@@ -64,6 +69,7 @@ export default function Todo({ todo }) {
             }
         });
         setTodos(updatedTodos);
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
         setShowUpdateDialog(false);
     }
     return (
@@ -141,8 +147,12 @@ export default function Todo({ todo }) {
             <CardContent>
                 <Grid container spacing={2}>
                     <Grid xs={8}>
-                        <Typography variant="h5" sx={{ textAlign: "left" }}>{todo.title}</Typography>
-                        <Typography variant="h6" sx={{ textAlign: "left" }}>{todo.description}</Typography>
+                        <Typography variant="h5" sx={{ textAlign: "left" , textDecoration: todo.isCompleted ? "line-through" : "none" }}>
+                            {todo.title}
+                        </Typography>
+                        <Typography variant="h6" sx={{ textAlign: "left" }}>
+                            {todo.description}
+                        </Typography>
                     </Grid>
                     <Grid 
                         xs={4} 

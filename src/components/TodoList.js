@@ -11,8 +11,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 import { TodosContext } from '../contexts/TodosContext';
-import { useContext } from 'react';
-import { useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -23,14 +22,41 @@ export default function TodoList() {
 
     const {todos, setTodos} = useContext(TodosContext)
     const [titleInput, setTitleInput] = useState("");
+    const [displayedTodosType, setDisplayedTodosType] = useState("all")
 
-    function handleCheckClick(todoId){
 
+
+    const completedTodos = todos.filter((t) => {
+        return t.isCompleted;
+    });
+
+    const unCompletedTodos = todos.filter((t) => {
+        return !t.isCompleted;
+    });
+
+    let todosToBeRendered = todos;
+
+    if(displayedTodosType === "completed")
+    {
+        todosToBeRendered = completedTodos;
+
+    }else if(displayedTodosType === "uncompleted"){
+        todosToBeRendered = unCompletedTodos;
     }
 
-    const todosJsx = todos.map((t) => {
+    const todosJsx = todosToBeRendered.map((t) => {
         return <Todo key={t.id} todo={t} />
-    })
+    });
+
+    useEffect(() => {
+        console.log("callinng use effect");
+        const storageTodos = JSON.parse(localStorage.getItem("todos"));
+        setTodos(storageTodos);
+    }, []);
+
+    function changeDisplayType(e){
+        setDisplayedTodosType(e.target.value);
+    }
     function handleAddClick(){
         const newTodo = {
             id: uuidv4(),
@@ -38,30 +64,37 @@ export default function TodoList() {
             description: "",
             isCompleted: false
         };
-        setTodos([...todos, newTodo]);
+        const updatedTodos = [...todos, newTodo];
+        setTodos(updatedTodos);
+        localStorage.setItem("todos", JSON.stringify(updatedTodos));
         setTitleInput("");
     }
+
     return (
       <Container maxWidth="sm">
-        <Card sx={{ minWidth: 275 }}>
+        <Card sx={{ minWidth: 275 }} style={{
+            maxHeight: "88vh",
+            overflow: "scroll"
+        }}>
             <CardContent>
                 <Typography variant="h2" sx={{ }}>My Todo List</Typography>
                 <Divider />
                 <ToggleButtonGroup
                     style={{ marginTop: "3%" }}
-                    // value={alignment}
+                    value={displayedTodosType}
                     exclusive
-                    // onChange={handleAlignment}
+                    onChange={changeDisplayType}
                     aria-label="text alignment"
+                    color="primary"
                 >
-                    <ToggleButton value="left" >
+                    <ToggleButton value="all" >
                         All
                     </ToggleButton>
-                    <ToggleButton value="center" >
+                    <ToggleButton value="completed" >
                         Completed
                     </ToggleButton>
-                    <ToggleButton value="right" >
-                        uncompleted
+                    <ToggleButton value="uncompleted" >
+                        Uncompleted
                     </ToggleButton>
                 </ToggleButtonGroup>
                 {todosJsx}
@@ -96,6 +129,7 @@ export default function TodoList() {
                             onClick={() => {
                                 handleAddClick();
                             }}
+                            disabled={titleInput.length === 0}
                         >
                             Add</Button>
                     </Grid>
